@@ -7,8 +7,7 @@ import org.springframework.http.MediaType;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -206,6 +205,19 @@ public class WalletOperationControllerTest extends BaseIntegrationTest {
                                 }
                                 """.formatted(UUID.randomUUID())))
                 .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    void updateBalance_shouldReturnMethodNotAllowed_whenUsingDeleteMethod() throws Exception {
+        mockMvc.perform(delete("/api/v1/wallet").contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "walletId": "%s",
+                                  "operationType": "DEPOSIT",
+                                  "amount": 100
+                                }
+                                """.formatted(UUID.randomUUID())))
+                .andExpect(status().isMethodNotAllowed());
     }
 
 }

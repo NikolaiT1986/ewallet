@@ -44,8 +44,7 @@ public class WalletController {
     public ResponseEntity<Page<WalletResponse>> getAllWallets(
             @ParameterObject @PageableDefault(
                     sort = "id", direction = Sort.Direction.ASC
-            )
-            Pageable pageable) {
+            ) Pageable pageable) {
         Page<Wallet> wallets = walletService.getAllWallets(pageable);
         return ResponseEntity.ok(wallets.map(walletMapper::toResponse));
     }
