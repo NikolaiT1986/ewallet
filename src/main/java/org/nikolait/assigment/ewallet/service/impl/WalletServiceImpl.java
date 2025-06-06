@@ -18,6 +18,7 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletJpaRepository walletJpaRepository;
 
+    @Override
     public Wallet createWallet() {
         return walletJpaRepository.save(Wallet.builder()
                 .balance(0L)

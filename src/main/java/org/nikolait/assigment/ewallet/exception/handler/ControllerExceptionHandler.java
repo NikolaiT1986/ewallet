@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -54,6 +55,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(CannotGetJdbcConnectionException.class)
     public ErrorResponse handleCannotGetJdbcConnectionException(CannotGetJdbcConnectionException ex) {
+        return ErrorResponse.builder(ex, HttpStatus.TOO_MANY_REQUESTS, ex.getMessage())
+                .type(URI.create(ex.getClass().getSimpleName()))
+                .build();
+    }
+
+    @ExceptionHandler(CannotCreateTransactionException.class)
+    public ErrorResponse handleCannotGetJdbcConnectionException(CannotCreateTransactionException ex) {
         return ErrorResponse.builder(ex, HttpStatus.TOO_MANY_REQUESTS, ex.getMessage())
                 .type(URI.create(ex.getClass().getSimpleName()))
                 .build();
