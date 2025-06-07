@@ -5,7 +5,7 @@
 ## Требования
 
 - Docker + Docker Compose (Docker Desktop будет достаточно)
-- Java 21 и Maven 3.9.x (опционально, для разработки)
+- Java 17 и Maven 3.9.x (опционально, для разработки)
 
 ## Настройка
 
@@ -25,14 +25,14 @@
 
 ## Swagger UI
 
-После запуска сервиса доступен Swagger UI по адресу: <http://localhost:8080/swagger-ui/index.html>
+После запуска сервиса доступен Swagger UI по адресу (не забудьте подставить свои host и port): <http://localhost:8080/swagger-ui/index.html>
 
 ## Актуатор
 
-После запуска сервиса доступен actuator по адресу: <http://localhost:8080/actuator>
+После запуска сервиса доступен actuator по адресу (не забудьте подставить свои host и port): <http://localhost:8080/actuator>
 
 ## Заметки
 
 Дополнительные параметры можно настраивать без пересборки контейнеров,
-добавлением необходимых переменных окружения в `docker-compose`, см. `application.yaml`
-и конфигурированием в самом `docker-compose`.
+добавлением необходимых переменных окружения в `docker-compose.yaml`, см. `application.yaml`
+и конфигурированием в самом `docker-compose.yaml`.
