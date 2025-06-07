@@ -19,7 +19,7 @@ server:
 spring:
   config.import: optional:classpath:secret/secret.properties
   application.name: ewallet
-  transaction.default-timeout: ${TRANSACTION_TIMEOUT:1}
+  transaction.default-timeout: ${TRANSACTION_TIMEOUT:3}
   devtools.restart.enabled: false
 
   jpa:
@@ -37,7 +37,7 @@ spring:
     hikari:
       maximum-pool-size: ${DB_POOL_MAX_SIZE:100}
       minimum-idle: ${DB_POOL_MIN_IDLE:10}
-      connection-timeout: ${DB_CONNECTION_TIMEOUT:1000}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:3000}
       idle-timeout: ${DB_IDLE_TIMEOUT:30000}
       max-lifetime: ${DB_MAX_LIFETIME:300000}
 
