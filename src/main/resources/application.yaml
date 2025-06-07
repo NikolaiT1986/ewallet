@@ -2,10 +2,17 @@ app:
   locale: ${LOCALE:en}
 
 pagination:
-  max-page-size: 100
+  max-page-size: ${MAX-PAGE-SIZE:100}
 
 server:
   port: ${SERVER_PORT:8080}
+  tomcat:
+    max-keep-alive-requests: ${TOMCAT_MAX-KEEP-ALIVE-REQUESTS:100}
+    accept-count: ${TOMCAT_ACCEPT_COUNT:100}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:8192}
+    threads:
+      max: ${TOMCAT_MAX_THREADS:200}
+      min-spare: ${TOMCAT_MIN_THREADS:10}
 
 spring:
   config.import: optional:classpath:secret/secret.properties
