@@ -5,6 +5,7 @@ import org.nikolait.assigment.ewallet.exception.InsufficientFundsException;
 import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.exception.RateLimitExceededException;
 import org.nikolait.assigment.ewallet.exception.WalletNotFoundException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -35,6 +36,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ErrorResponse handleValidationException(ValidationException ex) {
+        return ErrorResponse.builder(ex, HttpStatus.BAD_REQUEST, ex.getMessage())
+                .type(URI.create(ex.getClass().getSimpleName()))
+                .build();
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ErrorResponse handlePropertyReferenceException(PropertyReferenceException ex) {
         return ErrorResponse.builder(ex, HttpStatus.BAD_REQUEST, ex.getMessage())
                 .type(URI.create(ex.getClass().getSimpleName()))
                 .build();

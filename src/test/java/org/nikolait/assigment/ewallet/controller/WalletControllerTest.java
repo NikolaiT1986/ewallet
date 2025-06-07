@@ -88,4 +88,12 @@ class WalletControllerTest extends BaseIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void getAllWallets_shouldReturnBadRequest_whenInvalidSortParameter() throws Exception {
+        mockMvc.perform(get("/api/v1/wallets")
+                        .param("sort", "invalid-param,asc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }
