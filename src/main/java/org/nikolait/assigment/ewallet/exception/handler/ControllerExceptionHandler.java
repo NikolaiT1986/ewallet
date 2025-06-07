@@ -5,6 +5,7 @@ import org.nikolait.assigment.ewallet.exception.InsufficientFundsException;
 import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.exception.RateLimitExceededException;
 import org.nikolait.assigment.ewallet.exception.WalletNotFoundException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -65,6 +66,13 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpMediaTypeException.class)
     public ErrorResponse handleMediaTypeException(HttpMediaTypeException ex) {
         return ErrorResponse.builder(ex, ex.getStatusCode(), ex.getMessage())
+                .type(URI.create(ex.getClass().getSimpleName()))
+                .build();
+    }
+
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    public ErrorResponse handleDataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+        return ErrorResponse.builder(ex, HttpStatus.TOO_MANY_REQUESTS, ex.getMessage())
                 .type(URI.create(ex.getClass().getSimpleName()))
                 .build();
     }
