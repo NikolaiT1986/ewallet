@@ -27,6 +27,16 @@ public class WalletRateLimiter {
                 .build(this::createNewBucket);
     }
 
+    public void checkRateLimitOrThrow(UUID walletId) {
+        if (!tryConsume(walletId)) {
+            throw new RateLimitExceededException(
+                    walletId,
+                    properties.getCapacity(),
+                    properties.getRefillDuration().toSeconds()
+            );
+        }
+    }
+
     private Bucket createNewBucket(UUID walletId) {
         return Bucket.builder()
                 .addLimit(Bandwidth.builder()
@@ -38,18 +48,9 @@ public class WalletRateLimiter {
                 .build();
     }
 
-    public boolean tryConsume(UUID walletId) {
+    private boolean tryConsume(UUID walletId) {
         Bucket bucket = bucketCache.get(walletId);
         return bucket != null && bucket.tryConsume(1);
     }
 
-    public void checkRateLimitOrThrow(UUID walletId) {
-        if (!tryConsume(walletId)) {
-            throw new RateLimitExceededException(
-                    walletId,
-                    properties.getCapacity(),
-                    properties.getRefillDuration().toSeconds()
-            );
-        }
-    }
 }

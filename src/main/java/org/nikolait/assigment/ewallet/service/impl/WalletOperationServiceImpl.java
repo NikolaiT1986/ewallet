@@ -3,7 +3,6 @@ package org.nikolait.assigment.ewallet.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.nikolait.assigment.ewallet.exception.InsufficientFundsException;
 import org.nikolait.assigment.ewallet.exception.WalletNotFoundException;
-import org.nikolait.assigment.ewallet.limiter.WalletRateLimiter;
 import org.nikolait.assigment.ewallet.model.OperationType;
 import org.nikolait.assigment.ewallet.repository.WalletJdbcRepository;
 import org.nikolait.assigment.ewallet.service.WalletOperationService;
@@ -17,7 +16,6 @@ import java.util.UUID;
 public class WalletOperationServiceImpl implements WalletOperationService {
 
     private final WalletJdbcRepository walletJdbcRepository;
-    private final WalletRateLimiter rateLimiter;
 
     @Override
     @Transactional
@@ -27,7 +25,6 @@ public class WalletOperationServiceImpl implements WalletOperationService {
         }
 
         long balance = getBalanceWithLockById(id);
-        rateLimiter.checkRateLimitOrThrow(id);
 
         long updatedBalance = switch (type) {
             case DEPOSIT -> balance + amount;

@@ -3,6 +3,7 @@ package org.nikolait.assigment.ewallet.controller.v1;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nikolait.assigment.ewallet.dto.BalanceUpdateRequest;
+import org.nikolait.assigment.ewallet.limiter.WalletRateLimiter;
 import org.nikolait.assigment.ewallet.service.WalletOperationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/wallet")
 public class WalletOperationController {
 
-    private final WalletOperationService walletOperationService;
+    private final WalletRateLimiter rateLimiter;
+    private final WalletOperationService operationService;
 
     @PostMapping
     public ResponseEntity<Void> updateBalance(@Valid @RequestBody BalanceUpdateRequest request) {
-        walletOperationService.updateBalance(
+        rateLimiter.checkRateLimitOrThrow(request.getWalletId());
+        operationService.updateBalance(
                 request.getWalletId(),
                 request.getOperationType(),
                 request.getAmount().longValue()
