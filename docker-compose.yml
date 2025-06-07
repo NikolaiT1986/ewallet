@@ -1,0 +1,65 @@
+name: ewallet
+
+services:
+
+  application:
+    image: ewallet:0.0.1-SNAPSHOT
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ewallet-application
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
+    depends_on:
+      - postgres
+    environment:
+      # Spring Boot
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - SERVER_PORT=${SERVER_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+    entrypoint:
+      - java
+      - "-Xss512k"                      # Stack size per thread
+      - "-Xms512m"                      # Initial heap size
+      - "-Xmx2048m"                     # Maximum heap size
+      - "-XX:MaxDirectMemorySize=128m"  # Max direct (off-heap) memory
+      - "-XX:+UseG1GC"                  # Garbage Collector
+      - "-jar"
+      - "/app/app.jar"
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail --silent http://localhost:${SERVER_PORT:-8080}/actuator/health || exit 1" ]
+      start_period: 5s
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:17
+    container_name: ewallet-postgres
+    restart: always
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=120"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pg-data:
