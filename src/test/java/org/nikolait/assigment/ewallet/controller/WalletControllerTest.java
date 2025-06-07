@@ -2,7 +2,6 @@ package org.nikolait.assigment.ewallet.controller;
 
 import org.junit.jupiter.api.Test;
 import org.nikolait.assigment.ewallet.BaseIntegrationTest;
-import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.util.TestUriUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
