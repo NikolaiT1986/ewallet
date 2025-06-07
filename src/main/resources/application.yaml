@@ -1,6 +1,9 @@
 app:
   locale: ${LOCALE:en}
 
+pagination:
+  max-page-size: 100
+
 server:
   port: ${SERVER_PORT:8080}
 

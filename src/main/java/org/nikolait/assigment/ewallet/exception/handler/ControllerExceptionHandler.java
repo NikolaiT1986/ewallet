@@ -2,6 +2,7 @@ package org.nikolait.assigment.ewallet.exception.handler;
 
 import jakarta.validation.ValidationException;
 import org.nikolait.assigment.ewallet.exception.InsufficientFundsException;
+import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.exception.RateLimitExceededException;
 import org.nikolait.assigment.ewallet.exception.WalletNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ErrorResponse handleValidationException(ValidationException ex) {
+        return ErrorResponse.builder(ex, HttpStatus.BAD_REQUEST, ex.getMessage())
+                .type(URI.create(ex.getClass().getSimpleName()))
+                .build();
+    }
+
+    @ExceptionHandler(PageSizeLimitException.class)
+    public ErrorResponse handlePageSizeLimitException(PageSizeLimitException ex) {
         return ErrorResponse.builder(ex, HttpStatus.BAD_REQUEST, ex.getMessage())
                 .type(URI.create(ex.getClass().getSimpleName()))
                 .build();

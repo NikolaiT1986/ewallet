@@ -3,10 +3,13 @@ package org.nikolait.assigment.ewallet.controller.v1;
 import lombok.RequiredArgsConstructor;
 import org.nikolait.assigment.ewallet.dto.WalletResponse;
 import org.nikolait.assigment.ewallet.entity.Wallet;
+import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.mapper.WalletMapper;
 import org.nikolait.assigment.ewallet.service.WalletService;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -24,6 +27,9 @@ public class WalletController {
 
     private final WalletService walletService;
     private final WalletMapper walletMapper;
+
+    @Value("${pagination.max-page-size}")
+    private int maxPageSize;
 
 
     @PostMapping
@@ -45,6 +51,9 @@ public class WalletController {
             @ParameterObject @PageableDefault(
                     sort = "id", direction = Sort.Direction.ASC
             ) Pageable pageable) {
+        if (pageable.getPageSize() > maxPageSize) {
+            throw new PageSizeLimitException(maxPageSize);
+        }
         Page<Wallet> wallets = walletService.getAllWallets(pageable);
         return ResponseEntity.ok(wallets.map(walletMapper::toResponse));
     }

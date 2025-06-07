@@ -2,7 +2,9 @@ package org.nikolait.assigment.ewallet.controller;
 
 import org.junit.jupiter.api.Test;
 import org.nikolait.assigment.ewallet.BaseIntegrationTest;
+import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
 import org.nikolait.assigment.ewallet.util.TestUriUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
@@ -15,6 +17,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class WalletControllerTest extends BaseIntegrationTest {
+
+    @Value("${pagination.max-page-size}")
+    private int maxPageSize;
 
     @Test
     void createWallet_shouldCreateAndReturnWalletData() throws Exception {
@@ -73,6 +78,15 @@ class WalletControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.totalPages").value(1))
                 .andExpect(jsonPath("$.size").value(10))
                 .andExpect(jsonPath("$.number").value(0));
+    }
+
+    @Test
+    void getAllWallets_shouldReturnBadRequest_whenPageSizeExceedsMax() throws Exception {
+        mockMvc.perform(get("/api/v1/wallets")
+                        .param("page", "0")
+                        .param("size", String.valueOf(maxPageSize + 1))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }
