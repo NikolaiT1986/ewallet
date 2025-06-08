@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WalletOperationConcurrencyTest extends BaseIntegrationTest {
 
-    private static final int THEAD_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int ITERATIONS = 10;
 
     private static long initialBalance = 0L;
@@ -29,14 +29,14 @@ class WalletOperationConcurrencyTest extends BaseIntegrationTest {
     @BeforeEach
     void setUp() {
         initialBalance = walletJpaRepository.findById(wallet2Id).orElseThrow().getBalance();
-        executor = Executors.newFixedThreadPool(THEAD_COUNT);
+        executor = Executors.newFixedThreadPool(THREAD_COUNT);
     }
 
     @Test
     void testConcurrentWalletOperations() throws Exception {
         List<Callable<Void>> tasks = new ArrayList<>();
 
-        for (int i = 0; i < THEAD_COUNT; i++) {
+        for (int i = 0; i < THREAD_COUNT; i++) {
             tasks.add(this::updateBalanceTask);
         }
 
