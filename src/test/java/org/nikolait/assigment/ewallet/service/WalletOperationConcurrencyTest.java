@@ -23,14 +23,14 @@ class WalletOperationConcurrencyTest extends BaseIntegrationTest {
     private static long initialBalance = 0L;
     private static ExecutorService executor;
 
+    @Autowired
+    private WalletOperationService walletOperationService;
+
     @BeforeEach
     void setUp() {
         initialBalance = walletJpaRepository.findById(wallet2Id).orElseThrow().getBalance();
         executor = Executors.newFixedThreadPool(THEAD_COUNT);
     }
-
-    @Autowired
-    private WalletOperationService walletOperationService;
 
     @Test
     void testConcurrentWalletOperations() throws Exception {
