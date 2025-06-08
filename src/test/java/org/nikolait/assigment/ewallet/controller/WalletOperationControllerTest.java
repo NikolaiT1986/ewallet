@@ -119,7 +119,7 @@ public class WalletOperationControllerTest extends BaseIntegrationTest {
                                 {
                                   "walletId": "invalid-uuid",
                                   "operationType": "DEPOSIT",
-                                   "amount": 1000
+                                  "amount": 1000
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
