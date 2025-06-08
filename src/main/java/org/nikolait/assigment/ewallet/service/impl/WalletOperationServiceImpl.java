@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static org.nikolait.assigment.ewallet.model.OperationType.DEPOSIT;
-
 @Service
 @RequiredArgsConstructor
 public class WalletOperationServiceImpl implements WalletOperationService {
@@ -24,9 +22,14 @@ public class WalletOperationServiceImpl implements WalletOperationService {
             throw new IllegalArgumentException("Amount must be positive: " + amount);
         }
 
-        switch (walletJdbcRepository.updateBalance(id, type == DEPOSIT ? amount : -amount)) {
+        int result = switch (type) {
+            case DEPOSIT -> walletJdbcRepository.deposit(id, amount);
+            case WITHDRAW -> walletJdbcRepository.withdraw(id, amount);
+        };
+
+        switch (result) {
             case 0 -> throw new WalletNotFoundException(id);
-            case 2 -> throw new InsufficientFundsException(id);
+            case -1 -> throw new InsufficientFundsException(id);
         }
     }
 
