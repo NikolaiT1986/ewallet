@@ -11,13 +11,13 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+
+import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,21 +39,21 @@ public class WalletController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WalletResponse> getWallet(@PathVariable UUID id) {
+    public WalletResponse getWallet(@PathVariable UUID id) {
         Wallet wallet = walletService.getWallet(id);
-        return ResponseEntity.ok(walletMapper.toResponse(wallet));
+        return walletMapper.toResponse(wallet);
     }
 
     @GetMapping
-    public ResponseEntity<Page<WalletResponse>> getAllWallets(
+    public Page<WalletResponse> getAllWallets(
             @ParameterObject @PageableDefault(
-                    sort = "id", direction = Sort.Direction.ASC
-            ) Pageable pageable) {
+                    sort = "id", direction = ASC)
+            Pageable pageable) {
         if (pageable.getPageSize() > maxPageSize) {
             throw new PageSizeLimitException(maxPageSize);
         }
         Page<Wallet> wallets = walletService.getAllWallets(pageable);
-        return ResponseEntity.ok(wallets.map(walletMapper::toResponse));
+        return wallets.map(walletMapper::toResponse);
     }
 
 }
