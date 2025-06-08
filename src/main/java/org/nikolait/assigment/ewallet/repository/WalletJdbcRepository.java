@@ -24,15 +24,19 @@ public class WalletJdbcRepository {
                         SELECT
                             CASE
                                 WHEN NOT EXISTS (SELECT 1 FROM updated) THEN (
-                                    SELECT CASE WHEN EXISTS (
-                                        SELECT 1 FROM wallets WHERE id = ?
-                                    ) THEN 2 ELSE 0 END
+                                    SELECT CASE
+                                        WHEN ? < 0 THEN
+                                            CASE WHEN EXISTS (
+                                                SELECT 1 FROM wallets WHERE id = ?
+                                            ) THEN 2 ELSE 0 END
+                                        ELSE 0
+                                    END
                                 )
                                 ELSE 1
                             END AS result;
                         """,
                 Integer.class,
-                amount, id, amount, id
+                amount, id, amount, amount, id
         );
     }
 
