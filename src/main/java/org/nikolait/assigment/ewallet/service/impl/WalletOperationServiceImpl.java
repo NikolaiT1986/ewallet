@@ -7,9 +7,10 @@ import org.nikolait.assigment.ewallet.model.OperationType;
 import org.nikolait.assigment.ewallet.repository.WalletJdbcRepository;
 import org.nikolait.assigment.ewallet.service.WalletOperationService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static org.nikolait.assigment.ewallet.model.OperationType.DEPOSIT;
 
 @Service
 @RequiredArgsConstructor
@@ -18,31 +19,15 @@ public class WalletOperationServiceImpl implements WalletOperationService {
     private final WalletJdbcRepository walletJdbcRepository;
 
     @Override
-    @Transactional
     public void updateBalance(UUID id, OperationType type, long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must be positive: " + amount);
         }
 
-        long balance = getBalanceWithLockById(id);
-
-        long updatedBalance = switch (type) {
-            case DEPOSIT -> balance + amount;
-            case WITHDRAW -> balance - amount;
-        };
-
-        if (updatedBalance < 0) {
-            throw new InsufficientFundsException(id, balance, amount);
+        switch (walletJdbcRepository.updateBalance(id, type == DEPOSIT ? amount : -amount)) {
+            case 0 -> throw new WalletNotFoundException(id);
+            case 2 -> throw new InsufficientFundsException(id);
         }
-
-        walletJdbcRepository.updateBalance(id, updatedBalance);
-
-    }
-
-    private Long getBalanceWithLockById(UUID id) {
-        return walletJdbcRepository.getBalanceByIdWithLock(id).orElseThrow(
-                () -> new WalletNotFoundException(id)
-        );
     }
 
 }

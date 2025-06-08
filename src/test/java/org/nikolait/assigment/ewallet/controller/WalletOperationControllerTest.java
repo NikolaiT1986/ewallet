@@ -87,12 +87,25 @@ public class WalletOperationControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    void updateBalance_shouldReturnNotFound_whenWalletNotFound() throws Exception {
+    void updateBalanceDeposite_shouldReturnNotFound_whenWalletNotFound() throws Exception {
         mockMvc.perform(post("/api/v1/wallet").contentType(APPLICATION_JSON)
                         .content("""
                                 {
                                    "walletId": "%s",
                                     "operationType": "DEPOSIT",
+                                    "amount": 1000
+                                }
+                                """.formatted(UUID.randomUUID())))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateBalanceWithdraw_shouldReturnNotFound_whenWalletNotFound() throws Exception {
+        mockMvc.perform(post("/api/v1/wallet").contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "walletId": "%s",
+                                    "operationType": "WITHDRAW",
                                     "amount": 1000
                                 }
                                 """.formatted(UUID.randomUUID())))
