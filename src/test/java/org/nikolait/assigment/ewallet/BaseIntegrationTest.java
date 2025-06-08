@@ -32,7 +32,7 @@ public abstract class BaseIntegrationTest {
     protected MockMvc mockMvc;
 
     @Autowired
-    private WalletJpaRepository walletJpaRepository;
+    protected WalletJpaRepository walletJpaRepository;
 
     @BeforeEach
     void setUp() {
