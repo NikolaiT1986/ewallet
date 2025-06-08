@@ -1,16 +1,14 @@
 package org.nikolait.assigment.ewallet.controller;
 
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.nikolait.assigment.ewallet.BaseIntegrationTest;
-import org.nikolait.assigment.ewallet.util.TestUriUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,18 +20,19 @@ class WalletControllerTest extends BaseIntegrationTest {
 
     @Test
     void createWallet_shouldCreateAndReturnWalletData() throws Exception {
-        String location = mockMvc.perform(post("/api/v1/wallets"))
+        String responseBody = mockMvc.perform(post("/api/v1/wallets"))
                 .andExpect(status().isCreated())
-                .andReturn().getResponse().getHeader("Location");
+                .andExpect(jsonPath("$.*", hasSize(1)))
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
 
-        assertNotNull(location);
-        assertTrue(TestUriUtils.pathFromLocationStartsWith(location, "/api/v1/wallets/"));
-        String idPart = TestUriUtils.extractIdFromLocation(location);
+        UUID walletId = UUID.fromString(JsonPath.read(responseBody, "$.id"));
 
-        mockMvc.perform(get(location).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/wallets/{id}", walletId)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(idPart))
+                .andExpect(jsonPath("$.id").value(walletId.toString()))
                 .andExpect(jsonPath("$.balance").value(0))
                 .andExpect(jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(jsonPath("$.balanceUpdatedAt").isNotEmpty());

@@ -1,6 +1,7 @@
 package org.nikolait.assigment.ewallet.controller.v1;
 
 import lombok.RequiredArgsConstructor;
+import org.nikolait.assigment.ewallet.dto.WalletIdResponse;
 import org.nikolait.assigment.ewallet.dto.WalletResponse;
 import org.nikolait.assigment.ewallet.entity.Wallet;
 import org.nikolait.assigment.ewallet.exception.PageSizeLimitException;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static org.nikolait.assigment.ewallet.util.UriUtil.buildResourceUri;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/wallets")
@@ -34,11 +33,9 @@ public class WalletController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createWallet() {
+    public WalletIdResponse createWallet() {
         Wallet wallet = walletService.createWallet();
-        return ResponseEntity
-                .created(buildResourceUri(wallet.getId()))
-                .build();
+        return new WalletIdResponse(wallet.getId());
     }
 
     @GetMapping("/{id}")
