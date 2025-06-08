@@ -27,7 +27,6 @@ spring:
     open-in-view: false
     show-sql: ${JPA_SHOW-SQL:false}
     properties.hibernate.format_sql: true
-    database: postgresql
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
