@@ -20,7 +20,9 @@ spring:
   config.import: optional:classpath:secret/secret.properties
   application.name: ewallet
   transaction.default-timeout: ${TRANSACTION_TIMEOUT:3}
-  devtools.restart.enabled: false
+  devtools:
+    restart.enabled: false
+    livereload.enabled: false
 
   jpa:
     hibernate.ddl-auto: none
