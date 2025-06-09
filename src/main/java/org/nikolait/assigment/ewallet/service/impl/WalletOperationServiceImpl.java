@@ -29,18 +29,7 @@ public class WalletOperationServiceImpl implements WalletOperationService {
             throw new IllegalArgumentException("Amount must be positive: " + amount);
         }
 
-        synchronized (balanceCache) {
-            Long balance = Optional.ofNullable(balanceCache.get(id))
-                    .orElseGet(() -> walletJdbcRepository.getBalance(id));
-            if (balance == null) {
-                throw new WalletNotFoundException(id);
-            }
-            long newBalance = switch (type) {
-                case DEPOSIT -> balance + amount;
-                case WITHDRAW -> withdraw(id, balance, amount);
-            };
-            balanceCache.put(id, newBalance);
-        }
+        balanceCache.compute(id, (k, balance) -> computeBalance(id, type, balance, amount));
     }
 
     @Override
@@ -49,11 +38,22 @@ public class WalletOperationServiceImpl implements WalletOperationService {
             fixedRateString = "${balance.update.fixed-rate}"
     )
     public void flushToDatabase() {
-        synchronized (balanceCache) {
-            balanceCache.forEach(walletJdbcRepository::updateBalance);
-            balanceCache.clear();
-        }
+        balanceCache.forEach((id, balance) -> {
+            walletJdbcRepository.updateBalance(id, balance);
+            balanceCache.remove(id, balance);
+        });
         log.info("Balances successfully flushed to the database");
+    }
+
+    private long computeBalance(UUID id, OperationType type, Long oldBalance, long amount) {
+        Long balance = Optional.ofNullable(oldBalance).orElseGet(() -> walletJdbcRepository.getBalance(id));
+        if (balance == null) {
+            throw new WalletNotFoundException(id);
+        }
+        return switch (type) {
+            case DEPOSIT -> balance + amount;
+            case WITHDRAW -> withdraw(id, balance, amount);
+        };
     }
 
     private long withdraw(UUID id, long balance, long amount) {
