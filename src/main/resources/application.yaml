@@ -1,5 +1,6 @@
 app:
   locale: ${LOCALE:en}
+  jdbc.query-timeout-seconds: ${JDBC_QUERY_TIMEOUT_SECONDS:3}
 
 debug: ${APP_DEBUG:false}
 
