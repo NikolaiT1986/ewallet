@@ -45,6 +45,7 @@ class WalletOperationConcurrencyTest extends BaseIntegrationTest {
         }
 
         executor.shutdown();
+        walletOperationService.flushToDatabase();
 
         long finalBalance = walletJpaRepository.findById(wallet2Id).orElseThrow().getBalance();
         assertEquals(initialBalance, finalBalance);

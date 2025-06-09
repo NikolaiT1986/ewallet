@@ -7,6 +7,9 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class AppConfig {
@@ -17,6 +20,11 @@ public class AppConfig {
     @Bean
     public LocaleResolver localeResolver() {
         return new FixedLocaleResolver(Locale.forLanguageTag(fixedLocaleTag));
+    }
+
+    @Bean
+    public Map<UUID, Long> balanceCache() {
+        return new ConcurrentHashMap<>();
     }
 
 }

@@ -52,3 +52,8 @@ management:
   endpoint.health.probes.enabled: true
   endpoints.web.exposure.include: health, metrics
   metrics.enable.hikari: true
+
+balance:
+  scheduler:
+    initial-delay: ${BALANCE_SCHEDULER_INITIAL_DELAY:60000}
+    fixed-rate: ${BALANCE_SCHEDULER_FIXED_RATE:60000}
