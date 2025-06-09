@@ -45,8 +45,8 @@ public class WalletOperationServiceImpl implements WalletOperationService {
 
     @Override
     @Scheduled(
-            initialDelayString = "${balance.scheduler.initial-delay}",
-            fixedRateString = "${balance.scheduler.fixed-rate}"
+            initialDelayString = "${balance.update.initial-delay}",
+            fixedRateString = "${balance.update.fixed-rate}"
     )
     public void flushToDatabase() {
         synchronized (balanceCache) {
