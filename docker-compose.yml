@@ -12,7 +12,8 @@ services:
     ports:
       - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       # Spring Boot
       - DB_HOST=postgres
