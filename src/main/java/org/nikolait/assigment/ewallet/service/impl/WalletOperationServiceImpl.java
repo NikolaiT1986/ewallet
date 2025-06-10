@@ -3,15 +3,16 @@ package org.nikolait.assigment.ewallet.service.impl;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.nikolait.assigment.ewallet.exception.InsufficientFundsException;
 import org.nikolait.assigment.ewallet.exception.WalletNotFoundException;
 import org.nikolait.assigment.ewallet.model.OperationType;
 import org.nikolait.assigment.ewallet.repository.WalletJdbcRepository;
 import org.nikolait.assigment.ewallet.service.WalletOperationService;
+import org.redisson.api.RMap;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 public class WalletOperationServiceImpl implements WalletOperationService {
 
     private final WalletJdbcRepository walletJdbcRepository;
-    private final Map<UUID, Long> balanceCache;
+    private final RMap<UUID, Long> balanceCache;
 
     @Override
     public void updateBalance(UUID id, OperationType type, long amount) {
@@ -36,6 +37,11 @@ public class WalletOperationServiceImpl implements WalletOperationService {
     @Scheduled(
             initialDelayString = "${balance.update.initial-delay}",
             fixedRateString = "${balance.update.fixed-rate}"
+    )
+    @SchedulerLock(
+            name = "flushToDatabaseLock",
+            lockAtLeastFor = "${balance.update.fixed-rate}",
+            lockAtMostFor = "${balance.update.fixed-rate}"
     )
     public void flushToDatabase() {
         balanceCache.forEach((id, balance) -> {

@@ -32,7 +32,7 @@ spring:
     properties.hibernate.format_sql: true
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
@@ -41,6 +41,17 @@ spring:
       connection-timeout: ${DB_CONNECTION_TIMEOUT:3000}
       idle-timeout: ${DB_IDLE_TIMEOUT:30000}
       max-lifetime: ${DB_MAX_LIFETIME:300000}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      database: ${REDIS_DATABASE:3}
+      timeout: ${REDIS_TIMEOUT:3s}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:1s}
+      client-name: ${REDIS_CLIENT_NAME:ewallet}
+      ssl.enabled: ${REDIS_SSL:false}
 
 rate-limiter:
   capacity: ${RATE_LIMIT_CAPACITY:1000}

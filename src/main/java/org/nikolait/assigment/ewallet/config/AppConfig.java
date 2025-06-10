@@ -1,5 +1,8 @@
 package org.nikolait.assigment.ewallet.config;
 
+import lombok.RequiredArgsConstructor;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +12,13 @@ import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
 import javax.sql.DataSource;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
+@RequiredArgsConstructor
 public class AppConfig {
+
+    private final RedissonClient redissonClient;
 
     @Value("${app.locale:en}")
     private String fixedLocaleTag;
@@ -28,8 +32,8 @@ public class AppConfig {
     }
 
     @Bean
-    public Map<UUID, Long> balanceCache() {
-        return new ConcurrentHashMap<>();
+    public RMap<UUID, Long> balanceCache() {
+        return redissonClient.getMap("balanceCache");
     }
 
     @Bean
