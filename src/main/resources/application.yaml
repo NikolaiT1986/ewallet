@@ -66,5 +66,5 @@ management:
   metrics.enable.hikari: true
 
 balance.update:
-  initial-delay: ${BALANCE_UPDATE_INITIAL_DELAY:10s}
-  fixed-rate: ${BALANCE_UPDATE_FIXED_RATE:10s}
+  cron: ${BALANCE_UPDATE_CRON:*/10 * * * * *}
+  lock.at-most-for: ${BALANCE_UPDATE_LOCK:10s}
