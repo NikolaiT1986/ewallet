@@ -66,5 +66,5 @@ management:
   metrics.enable.hikari: true
 
 balance.update:
-  initial-delay: ${BALANCE_UPDATE_INITIAL_DELAY:10000}
-  fixed-rate: ${BALANCE_UPDATE_FIXED_RATE:60000}
+  initial-delay: ${BALANCE_UPDATE_INITIAL_DELAY:10s}
+  fixed-rate: ${BALANCE_UPDATE_FIXED_RATE:10s}
