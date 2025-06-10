@@ -3,7 +3,7 @@ name: ewallet
 services:
 
   application:
-    image: ewallet:0.0.1-SNAPSHOT
+    image: ewallet:0.0.2-SNAPSHOT
     build:
       context: .
       dockerfile: Dockerfile
