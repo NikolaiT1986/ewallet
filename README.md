@@ -17,6 +17,7 @@
     DB_NAME=ваше_db_name
     DB_USERNAME=ваш_pg_username
     DB_PASSWORD=ваш_pg_password
+    REDIS_PASSWORD=ваш_redis_password
     ```
 
 2. Быстрый запуск для с `docker-compose` (Docker-образ будет собран из `Dockerfile`, если отсутствует):
