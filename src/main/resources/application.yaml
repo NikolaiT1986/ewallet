@@ -53,7 +53,7 @@ spring:
       ssl.enabled: ${REDIS_SSL:false}
       redisson:
         min-idle: ${REDISSON_MIN_IDLE:100}
-        pool-size: ${REDISSON_POOL_SIZE:300}
+        pool-size: ${REDISSON_POOL_SIZE:200}
         threads: ${REDISSON_THREADS:0}
         netty-threads: ${REDISSON_NETTY_THREADS:0}
 
