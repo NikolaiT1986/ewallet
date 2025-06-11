@@ -47,11 +47,15 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD}
-      database: ${REDIS_DATABASE:3}
-      timeout: ${REDIS_TIMEOUT:3s}
-      connect-timeout: ${REDIS_CONNECT_TIMEOUT:1s}
+      timeout: ${REDIS_TIMEOUT:3000}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:1000}
       client-name: ${REDIS_CLIENT_NAME:ewallet}
       ssl.enabled: ${REDIS_SSL:false}
+      redisson:
+        min-idle: ${REDISSON_MIN_IDLE:100}
+        pool-size: ${REDISSON_POOL_SIZE:300}
+        threads: ${REDISSON_THREADS:0}
+        netty-threads: ${REDISSON_NETTY_THREADS:0}
 
 rate-limiter:
   capacity: ${RATE_LIMIT_CAPACITY:1000}

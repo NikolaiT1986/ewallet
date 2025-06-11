@@ -32,7 +32,7 @@ services:
       - "-Xss512k"                      # Stack size per thread
       - "-Xms512m"                      # Initial heap size
       - "-Xmx2048m"                     # Maximum heap size
-      - "-XX:MaxDirectMemorySize=128m"  # Max direct (off-heap) memory
+      - "-XX:MaxDirectMemorySize=256m"  # Max direct (off-heap) memory
       - "-XX:+UseG1GC"                  # Garbage Collector
       - "-jar"
       - "/app/app.jar"
