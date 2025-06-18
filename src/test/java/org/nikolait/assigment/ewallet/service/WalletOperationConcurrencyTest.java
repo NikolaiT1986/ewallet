@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WalletOperationConcurrencyTest extends BaseIntegrationTest {
@@ -37,7 +38,7 @@ class WalletOperationConcurrencyTest extends BaseIntegrationTest {
         List<Callable<Void>> tasks = new ArrayList<>();
 
         for (int i = 0; i < THREAD_COUNT; i++) {
-            tasks.add(this::updateBalanceTask);
+            tasks.add(this::updateBalanceRandomOrderTask);
         }
 
         for (Future<Void> future : executor.invokeAll(tasks)) {
@@ -50,10 +51,15 @@ class WalletOperationConcurrencyTest extends BaseIntegrationTest {
         assertEquals(initialBalance, finalBalance);
     }
 
-    private Void updateBalanceTask() {
+    private Void updateBalanceRandomOrderTask() {
         for (int i = 0; i < ITERATIONS; i++) {
-            walletOperationService.updateBalance(wallet2Id, OperationType.WITHDRAW, 1);
-            walletOperationService.updateBalance(wallet2Id, OperationType.DEPOSIT, 1);
+            if (current().nextBoolean()) {
+                walletOperationService.updateBalance(wallet2Id, OperationType.DEPOSIT, 1);
+                walletOperationService.updateBalance(wallet2Id, OperationType.WITHDRAW, 1);
+            } else {
+                walletOperationService.updateBalance(wallet2Id, OperationType.WITHDRAW, 1);
+                walletOperationService.updateBalance(wallet2Id, OperationType.DEPOSIT, 1);
+            }
         }
         return null;
     }
