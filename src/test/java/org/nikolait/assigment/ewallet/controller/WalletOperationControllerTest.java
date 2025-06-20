@@ -2,8 +2,6 @@ package org.nikolait.assigment.ewallet.controller;
 
 import org.junit.jupiter.api.Test;
 import org.nikolait.assigment.ewallet.BaseIntegrationTest;
-import org.nikolait.assigment.ewallet.service.WalletOperationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
@@ -14,9 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class WalletOperationControllerTest extends BaseIntegrationTest {
-
-    @Autowired
-    private WalletOperationService walletOperationService;
 
     @Test
     void updateBalance_shouldDepositToWallet() throws Exception {
@@ -29,8 +24,6 @@ public class WalletOperationControllerTest extends BaseIntegrationTest {
                                 }
                                 """.formatted(wallet1Id)))
                 .andExpect(status().isOk());
-
-        walletOperationService.flushToDatabase();
 
         mockMvc.perform(get("/api/v1/wallets/{id}", wallet1Id))
                 .andExpect(status().isOk())
@@ -48,8 +41,6 @@ public class WalletOperationControllerTest extends BaseIntegrationTest {
                                 }
                                 """.formatted(wallet2Id)))
                 .andExpect(status().isOk());
-
-        walletOperationService.flushToDatabase();
 
         mockMvc.perform(get("/api/v1/wallets/{id}", wallet2Id))
                 .andExpect(status().isOk())

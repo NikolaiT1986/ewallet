@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletJpaRepository walletJpaRepository;
+    private final Map<UUID, Long> balanceCache;
 
     @Override
     public Wallet createWallet() {
@@ -28,11 +30,23 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public Wallet getWallet(UUID id) {
-        return walletJpaRepository.findById(id).orElseThrow(() -> new WalletNotFoundException(id));
+        Wallet wallet = walletJpaRepository.findById(id).orElseThrow(() -> new WalletNotFoundException(id));
+        Long actualBalance = balanceCache.get(wallet.getId());
+        if (actualBalance != null) {
+            wallet.setBalance(actualBalance);
+        }
+        return wallet;
     }
 
     @Override
     public Page<Wallet> getAllWallets(Pageable pageable) {
-        return walletJpaRepository.findAll(pageable);
+        return walletJpaRepository.findAll(pageable)
+                .map(wallet -> {
+                    Long actualBalance = balanceCache.get(wallet.getId());
+                    if (actualBalance != null) {
+                        wallet.setBalance(actualBalance);
+                    }
+                    return wallet;
+                });
     }
 }
