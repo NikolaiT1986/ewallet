@@ -31,22 +31,19 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet getWallet(UUID id) {
         Wallet wallet = walletJpaRepository.findById(id).orElseThrow(() -> new WalletNotFoundException(id));
+        return applyActualBalance(wallet);
+    }
+
+    @Override
+    public Page<Wallet> getAllWallets(Pageable pageable) {
+        return walletJpaRepository.findAll(pageable).map(this::applyActualBalance);
+    }
+
+    private Wallet applyActualBalance(Wallet wallet) {
         Long actualBalance = balanceCache.get(wallet.getId());
         if (actualBalance != null) {
             wallet.setBalance(actualBalance);
         }
         return wallet;
-    }
-
-    @Override
-    public Page<Wallet> getAllWallets(Pageable pageable) {
-        return walletJpaRepository.findAll(pageable)
-                .map(wallet -> {
-                    Long actualBalance = balanceCache.get(wallet.getId());
-                    if (actualBalance != null) {
-                        wallet.setBalance(actualBalance);
-                    }
-                    return wallet;
-                });
     }
 }
